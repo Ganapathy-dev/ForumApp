@@ -54,15 +54,16 @@ class NewTopicTests(TestCase):
     def setUp(self):
         Board.objects.create(name='Django', description='Django board')
         User.objects.create_user(username='testuser', email='user@gmail.com',password='user@123')
+        self.client.login(username='testuser',password='user@123')
 
     def test_new_topic_view_success_status_code(self):
         url=reverse('new_topic',kwargs={'pk':1})
-        response=self.client.get(url)
+        response=self.client.get(url,follow=True)
         self.assertEquals(response.status_code, 200)
 
     def test_new_topic_view_not_found_status_code(self):
         url=reverse('new_topic',kwargs={'pk':99})
-        response=self.client.get(url)
+        response=self.client.get(url,follow=True)
         self.assertEquals(response.status_code,404)
     
     def test_new_topic_url_resloves_new_topic_view(self):
@@ -87,7 +88,7 @@ class NewTopicTests(TestCase):
 
     def test_csrf(self):
         url=reverse('new_topic',kwargs={'pk':1})
-        response=self.client.get(url)
+        response=self.client.get(url,follow=True)
         self.assertContains(response,'csrfmiddlewaretoken')
     
     def test_new_topic_valid_post_data(self):
@@ -103,7 +104,7 @@ class NewTopicTests(TestCase):
     
     def test_new_topic_invalid_post_data(self):
         url=reverse('new_topic',kwargs={'pk':1})
-        response=self.client.post(url,{})
+        response=self.client.post(url,{},follow=True)
         self.assertEqual(response.status_code,200)
 
     def test_new_topic_invalid_post_data_empty_fields(self):
@@ -112,20 +113,20 @@ class NewTopicTests(TestCase):
             'subject': '',
             'message': ''
         }
-        response = self.client.post(url, data)
+        response = self.client.post(url, data,follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertFalse(Topic.objects.exists())
         self.assertFalse(Post.objects.exists())
     
     def test_contains_form(self):
         url=reverse('new_topic',kwargs={'pk':1})
-        response=self.client.get(url)
+        response=self.client.get(url,follow=True)
         form=response.context.get('form')
         self.assertIsInstance(form, NewTopicForm)
 
     def test_new_topic_invalid_post_data(self):
         url=reverse('new_topic',kwargs={'pk':1})
-        response=self.client.post(url,{})
+        response=self.client.post(url,{},follow=True)
         form=response.context.get('form')
         self.assertEquals(response.status_code, 200)
         self.assertTrue(form.errors)
