@@ -8,7 +8,7 @@ class NewTopicForm(forms.ModelForm):
 
     class Meta:
         model=Topic
-        fields=['message',]
+        fields=['subject','message']
 
 
 class PostForm(forms.ModelForm):
