@@ -4,6 +4,10 @@
 
 {% block title %}Post a reply{% endblock %}
 
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css">
+{% endblock %}
+
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
   <li class="breadcrumb-item"><a href="{% url 'board_topics' topic.board.pk %}">{{ topic.board.name }}</a></li>
@@ -19,7 +23,7 @@
     <button type="submit" class="btn btn-success">Post a reply</button>
   </form>
 
-  {% for post in topic.posts.all %}
+  {% for post in topic.get_last_ten_posts %}
     <div class="card mb-2">
       <div class="card-body p-3">
         <div class="row mb-3">
@@ -34,5 +38,11 @@
       </div>
     </div>
   {% endfor %}
+  {% block javascript %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"></script>
+  {% comment %} <script> when using javascript postreply is not working
+    var simplemde=new SimpleMDE
+  </script> {% endcomment %}
+  {% endblock %}  
 
 {% endblock %}

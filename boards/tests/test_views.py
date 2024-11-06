@@ -1,9 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse,resolve
-from ..views import home, board_topics,new_topic
+from ..views import BoardListView, TopicListView,new_topic
 from django.contrib.auth.models import User
 from ..models import Board,Topic,Post
 from ..forms import NewTopicForm
+
 # Create your tests here.
 
 class HomeTests(TestCase):
@@ -19,7 +20,7 @@ class HomeTests(TestCase):
 
     def test_home_url_resolves_home_view(self):
         view=resolve('/')
-        self.assertEqual(view.func, home)
+        self.assertEqual(view.func.view_class, BoardListView)
     
     def test_home_view_contains_link_to_topic_page(self):
         board_topics_url=reverse('board_topics',kwargs={'pk':self.board.pk})
@@ -42,7 +43,7 @@ class BoardTopicsTests(TestCase):
     
     def test_board_topics_url_resolves_board_topics_view(self):
         view=resolve('/boards/1/')
-        self.assertEqual(view.func, board_topics)
+        self.assertEqual(view.func.view_class, TopicListView)
 
     def test_board_topics_views_contains_link_back_to_homepage(self):
         board_topics_url=reverse('board_topics',kwargs={'pk':1})
